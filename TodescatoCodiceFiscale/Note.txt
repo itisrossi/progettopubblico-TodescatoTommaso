@@ -1,0 +1,4 @@
+Il front-end è stato realizzato interamente con tailwindcss (https://tailwindcss.com/), un framework open source per css che permette di
+modificare lo stile delle pagine tramite le classi degli elementi html, senza utilizzare elementi prefatti.
+Il file "./Style/output.css" è generato dal framework, e deriva da ciò che viene rilevato durante la fase di sviluppo nelle classi html,
+oltre che ad un altro file input.css (rimosso per inutilità in fase di deploy insieme ad altri).
