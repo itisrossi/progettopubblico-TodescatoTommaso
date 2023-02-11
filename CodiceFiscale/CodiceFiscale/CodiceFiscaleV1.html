@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calcola il tuo codice fiscale</title>
+<script>
+    function main()
+    {
+        const cfData = 
+        [
+        document.getElementById("inputCognome"), document.getElementById("inputNome"),
+        document.getElementById("inputDataDiNascita"), document.getElementById("inputSessoF").checked, 
+        document.getElementById("inputCodiceCatastale")
+        ] 
+
+    }
+    function calcolaCF()
+    { 
+        codiceFiscale = calcolaCognome()+calcolaNome()+calcolaDataDiNascita()+calcolaCodiceCatastale()
+        if (codiceFiscale.length==15)
+        {
+        codiceFiscale += calcolaCheckDigit()
+        alert("Il tuo codice fiscale è" + "\n" + codiceFiscale.toUpperCase())
+        }
+        else
+        alert("Compilare tutti i campi")
+    }
+    function controllaSeVocale(carattereDaControllare)
+    {
+        return (vocali.includes(carattereDaControllare.toLowerCase()))   //toLowerCase serve per far funzionare tutto anche se l'input è in maiuscolo, senza aggiungere le Vocali in maiuscolo alla lista
+    }
+    function aggiungiVocaliX(stringaDiPartenza,consonantiGiaMesse)
+    {
+        let i = 0
+        let daAggiungere = ""
+        while(i<stringaDiPartenza.length && (consonantiGiaMesse+daAggiungere).length!=3)
+        {
+            if (controllaSeVocale(stringaDiPartenza[i])==true)
+            daAggiungere+=stringaDiPartenza[i]
+            i++
+        }
+        i=0
+        while((consonantiGiaMesse+daAggiungere).length!=3)
+            daAggiungere+="x"
+        return consonantiGiaMesse+daAggiungere
+    }
+    function gestioneCampiVuoti(id)
+    {
+        if(document.getElementById(id).value=="")
+        {
+            document.getElementById(id).value=""
+            return true
+        }
+        else
+            return false
+    }
+    function calcolaNome()
+    {
+        let nome =  document.getElementById("inputNome").value.replace(" ","")   //il replace serve per nomi lunghi composti da più parole
+        let output = ""
+        let i = 0
+        let consonanti = ""
+        while(i<nome.length && consonanti.length!=4)
+        {
+            if (controllaSeVocale(nome[i])==false)
+                consonanti+=nome[i]
+            i++ 
+        } 
+        if(consonanti.length == 3)
+            output = consonanti
+        else if(consonanti.length > 3)
+            output = consonanti.replace(consonanti[1],"")
+        else
+        {
+            output = aggiungiVocaliX(nome, consonanti)
+        }
+        return output
+    }
+    function calcolaCognome()
+    {
+        let cognome = document.getElementById("inputCognome").value.replace(" ","")  //il replace serve per nomi lunghi composti da più parole
+        let output = ""
+        let i = 0
+        while(i<cognome.length && output.length<3)
+        {
+            if (controllaSeVocale(cognome[i])==false)
+                output+=cognome[i]
+            i++ 
+        } 
+        if(output.length<3)
+        {
+            output = aggiungiVocaliX(cognome, output)
+        }                                              
+        return output
+    }
+    function calcolaDataDiNascita() 
+    {
+        let dataNascita = document.getElementById("inputDataDiNascita").value.split("-")   
+        let output = ""
+        output += dataNascita[0].slice(-2)        //ANNO  
+        let mese = parseInt(dataNascita[1])       //MESE
+        output += letteraCorrispondente[mese-1]         
+        let giorno = dataNascita[2]       //GIORNO
+        if (document.getElementById("inputSessoF").checked == true)     //INPUTSESSO
+            return output+(parseInt(giorno)+40)
+        else
+            return output+giorno
+    }
+    function calcolaCodiceCatastale()
+    {
+        let codCatastale = document.getElementById("inputCodiceCatastale").value
+        if (codCatastale.length=4 && isNaN(codCatastale[0])==true && !isNaN(codCatastale.slice(-3)))
+        return codCatastale
+        else
+        {
+        alert("Codice catastale errato")
+        document.getElementById("inputCodiceCatastale").value = ""
+        return ""
+        }
+    }
+    function calcolaCheckDigit()
+    {
+        let SommaPari = 0
+        let SommaDispari = 0 
+        let i = 0
+        for(i;i<codiceFiscale.length;i++)
+        {
+        if (!(i%2==0))          //bisogna invertire pari e dispari perché la posizione 0 dell'array sarebbe la posizione 1 considerando il codice fiscale come stringa
+            SommaPari += dictPari[codiceFiscale[i].toUpperCase()]
+        else
+            SommaDispari += dictDispari[codiceFiscale[i].toUpperCase()]
+        }
+        return dictDecodifica[(SommaPari+SommaDispari)%26]
+    }
+</script>
+</head>
+<body>
+<h1 id="testo">Calcolatore di codice fiscale</h1>
+<form>
+    <input type="text" id="inputNome" placeholder="Nome">   <br><br>
+    <input type="text" id="inputCognome" placeholder="Cognome">  <br><br>
+    <input type="text" id="inputCodiceCatastale" placeholder="Codice catastale"></input><br><br>
+    <a>Data di nascita:</a><br>
+    <input type="date" id="inputDataDiNascita"></input><br><br>
+    <a>Sesso:</a><br>
+    <input type="radio" name="InputSesso">      <!-- id="inputSessoM" -->
+        <label for="inputSessoM"> M </label> <br> 
+    <input type="radio" id="inputSessoF" name="InputSesso">
+        <label for="inputSessoF" > F </label><br><br>
+    <input type="button" value="Prova" onclick="calcolaCF()"></button> 
+</form>
+<script>
+    //dichiaro tutte le variabili che serviranno sempre
+    let codiceFiscale = "";
+    const vocali = ["a","e","i","o","u"]
+    const letteraCorrispondente = ["a","b","c","d","e","h","l","m","p","r","s","t"]   
+    const dictDispari = 
+    {
+    0:1, 1:0, 2:5, 3:7,4:9, 5:13,
+    6:15, 7:17, 8:19, 9:21, A:1, 
+    B:0, C:5, D:7, E:9, F:13, G:15, 
+    H:17, I:19, J:21, K:2, L:4, M:18, 
+    N:20, O:11, P:3, Q:6, R:8, S:12, T:14, 
+    U:16, V:10,W:22, X:25, Y:24, Z:23
+    }   
+    const dictPari =
+    {
+    0:0, 1:1, 2:2, 3:3, 4:4, 5:5,
+    6:6, 7:7, 8:8, 9:9, A:0, B:1,
+    C:2, D:3, E:4, F:5, G:6, I:8, 
+    J:9, K:10, L:11, M:12, N:13, 
+    O:14, P:15, Q:16, R:17, S:18, T:19, 
+    U:20, V:21, W:22, X:23, Y:24, Z:25
+    }
+    const dictDecodifica =
+    {
+    0:"A", 1:"B", 2:"C", 3:"D", 4:"E", 5:"F", 6:"G", 
+    7:"H", 8:"I", 9:"J",10:"K", 11:"L", 12:"M", 13:"N", 
+    14:"O", 15:"P", 16:"Q", 17:"R", 18:"S", 19:"T", 
+    20:"U", 21:"V", 22:"W", 23:"X", 24:"Y", 25:"Z"
+    }
+    document.getElementById("inputDataDiNascita").max = new Date().toISOString().substr(0,10)      //DATA MASSIMA
+</script>
+</body> 
+</html>
