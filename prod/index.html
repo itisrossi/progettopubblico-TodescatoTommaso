@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Pagina</title>
+		<script src="Code/Core.js"></script>
+		<link href="./Style/output.css" rel="stylesheet">
+	</head>
+	
+	<body class="grid place-items-center bg-gradient-to-r from-indigo-900 to-sky-900">
+		<div class="flex items-center h-80">
+			<h1 class="text-center font-extrabold text-3xl text-white px-16">CALCOLO CODICE FISCALE</h1>
+			<img src="Img/Emblem_of_Italy_(black_and_white_without_striped_background).svg.png" class="flex scale-[0.35]">
+		</div>
+		<h1 id="result" class="font-bold text-white text-center text-xl"></h1><br>
+		<div class="grid grid-cols-1 w-1/2">
+			<label for="surname" 		class="font-bold text-white text-center">Cognome</label>
+			<input type="text" id="surname" name="surname" 			class="border-1 rounded-md border-gray-400 font-medium h-8 text-center "><br>
+			
+			<label for="name" 			class="font-bold text-white text-center">Nome</label>
+			<input type="text" id="name" name="name "		 		class="border-1 rounded-md border-gray-400 font-medium h-8 text-center "><br>
+			
+			<label for="birthplace" 	class="font-bold text-white text-center">Luogo di nascita <a class="text-blue-400 hover:underline" href="https://www1.agenziaentrate.gov.it/servizi/codici/ricerca/VisualizzaTabella.php?ArcName=COM-ICI">(codice)</a></label>
+			<input type="text" id="birthplace" name="birthplace"	class="border-1 rounded-md border-gray-400 font-medium h-8 text-center "><br>
+			
+			<div class="flex items-center pl-4 border-2 border-gray-300 rounded-md">
+				<input id="M" type="radio" name="sex" 				class="w-4 h-4 text-center">
+				<label for="M" 			class="w-full py-4 mr-8 text-white text-center font-medium">Sesso maschile</label>
+			</div><br>
+			<div class="flex items-center pl-4 border-2 border-gray-300 rounded-md">
+				<input id="F" type="radio" name="sex" 				class="w-4 h-4 text-center">
+				<label for="F" 			class="w-full py-4 mr-8 text-white text-center font-medium">Sesso femminile</label>
+			</div><br>
+			
+			<label for="birthdate"		class="font-bold text-white text-center">Data di nascita</label>
+			<input type="date" id="birthdate" name="birthdate" 		class="border-1 rounded-md border-gray-400 font-medium h-8"><br>
+			
+			<script>
+				document.getElementById("birthdate").max = new Date().toISOString().split("T")[0];
+			</script>
+
+			<button onclick="getCode('surname','name','birthplace','F','birthdate')" 
+				class="bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 px-4 border rounded-md border-gray-400">Calcola</button>
+		</div>
+	</body>
+</html>
